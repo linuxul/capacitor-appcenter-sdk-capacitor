@@ -15,7 +15,7 @@ on:
 
 env:
   NODE_VERSION: 21.x
-  JAVA_VERSION: 17
+  JAVA_VERSION: 21
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -30,6 +30,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm ci
+      - name: Install ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint
+          chmod a+x ktlint
+          sudo mv ktlint /usr/local/bin/
       - run: npm run lint      
   verify-android:
     name: Verify Android

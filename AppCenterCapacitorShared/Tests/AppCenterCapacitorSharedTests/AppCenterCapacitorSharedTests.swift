@@ -15,8 +15,9 @@ class AppCenterCapacitorSharedTests: XCTestCase {
     }
 
     func testIsSdkConfigured() {
-        // Initially, the SDK should not be configured
-        XCTAssertFalse(AppCenterCapacitorShared.isSdkConfigured())
+        // AppCenter stays configured for the whole process, so the initial state is checked in
+        // testConfigureWithSettings, which is the only test that configures it
+        XCTAssertEqual(AppCenter.isConfigured, AppCenterCapacitorShared.isSdkConfigured())
     }
 
     func testSetStartAutomatically() {
@@ -31,6 +32,9 @@ class AppCenterCapacitorSharedTests: XCTestCase {
     }
 
     func testConfigureWithSettings() {
+        // Initially, the SDK should not be configured
+        XCTAssertFalse(AppCenterCapacitorShared.isSdkConfigured())
+
         // Test without app secret
         AppCenterCapacitorShared.configureWithSettings()
         XCTAssertTrue(AppCenter.isConfigured)
@@ -51,14 +55,14 @@ class AppCenterCapacitorSharedTests: XCTestCase {
         XCTAssertNil(AppCenterCapacitorShared.getWrapperSdk())
     }
 
-    func testSetWrapperSdk() {
-        let wrapperSdk = WrapperSdk(wrapperSdkVersion: "5.0.0",
+    func testSetWrapperSdk() throws {
+        let wrapperSdk = try XCTUnwrap(WrapperSdk(wrapperSdkVersion: "5.0.0",
                                     wrapperSdkName: "appcenter.capacitor",
                                     wrapperRuntimeVersion: nil,
                                     liveUpdateReleaseLabel: nil,
                                     liveUpdateDeploymentKey: nil,
-                                    liveUpdatePackageHash: nil)
-        AppCenterCapacitorShared.setWrapperSdk(wrapperSdk ?? <#default value#>)
+                                    liveUpdatePackageHash: nil))
+        AppCenterCapacitorShared.setWrapperSdk(wrapperSdk)
         XCTAssertEqual(AppCenterCapacitorShared.getWrapperSdk(), wrapperSdk)
     }
 }
