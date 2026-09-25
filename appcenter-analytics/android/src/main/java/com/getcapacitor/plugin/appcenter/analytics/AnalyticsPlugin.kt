@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.appcenter.analytics
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
+import com.getcapacitor.PluginException
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
 import com.microsoft.appcenter.AppCenter
@@ -52,8 +53,7 @@ public class AnalyticsPlugin : Plugin() {
     @PluginMethod(returnType = PluginMethod.RETURN_NONE)
     public fun trackEvent(call: PluginCall) {
         if (!call.data.has("name")) {
-            call.reject("Must provide an event name")
-            return
+            throw PluginException("Must provide an event name")
         }
         val name = call.getString("name")
 
