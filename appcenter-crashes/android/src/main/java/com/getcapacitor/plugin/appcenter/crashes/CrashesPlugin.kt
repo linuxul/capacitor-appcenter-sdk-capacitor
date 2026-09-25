@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.appcenter.crashes
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
+import com.getcapacitor.PluginException
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
 import com.microsoft.appcenter.reactnative.shared.AppCenterReactNativeShared
@@ -28,8 +29,7 @@ public class CrashesPlugin : Plugin() {
             // parsed from JS instead of a Throwable error. It ends up the same in AppCenter
             errorReportId = implementation.trackException(error, properties, attachments)
         } catch (e: Exception) {
-            call.reject("Exception while tracking error: " + e.message)
-            return
+            throw PluginException("Exception while tracking error: " + e.message, cause = e)
         }
 
         val ret = JSObject()
@@ -73,10 +73,7 @@ public class CrashesPlugin : Plugin() {
     @PluginMethod
     public fun lastSessionCrashReport(call: PluginCall) {
         val lastSessionCrashReport = implementation.lastSessionCrashReport()
-        if (lastSessionCrashReport == null) {
-            call.reject("No crash report available")
-            return
-        }
+            ?: throw PluginException("No crash report available")
         val ret = JSObject()
         ret.put("value", lastSessionCrashReport)
         call.resolve(ret)
