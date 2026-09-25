@@ -7,13 +7,13 @@ public class AnalyticsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "AnalyticsPlugin"
     public let jsName = "Analytics"
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "setEnabled", returnType: .none),
-        CAPPluginMethod(name: "isEnabled", returnType: .promise),
-        CAPPluginMethod(name: "pause", returnType: .none),
-        CAPPluginMethod(name: "resume", returnType: .none),
-        CAPPluginMethod(name: "trackEvent", returnType: .none),
-        CAPPluginMethod(name: "enableManualSessionTracker", returnType: .none),
-        CAPPluginMethod(name: "startSession", returnType: .none)
+        .none("setEnabled", AnalyticsPlugin.setEnabled),
+        .promise("isEnabled", AnalyticsPlugin.isEnabled),
+        .none("pause", AnalyticsPlugin.pause),
+        .none("resume", AnalyticsPlugin.resume),
+        .none("trackEvent", AnalyticsPlugin.trackEvent),
+        .none("enableManualSessionTracker", AnalyticsPlugin.enableManualSessionTracker),
+        .none("startSession", AnalyticsPlugin.startSession)
     ]
 
     private let implementation = AppCenterAnalyticsBase()
@@ -43,34 +43,28 @@ public class AnalyticsPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func setEnabled(_ call: CAPPluginCall) {
+    func setEnabled(_ call: CAPPluginCall) {
         implementation.enable(call.getBool("enableFlag") ?? false)
         call.resolve()
     }
 
-    @objc func isEnabled(_ call: CAPPluginCall) {
+    func isEnabled(_ call: CAPPluginCall) {
         call.resolve(["value": implementation.isEnabled()])
     }
 
-    @objc func pause(_ call: CAPPluginCall) {
+    func pause(_ call: CAPPluginCall) {
         implementation.pause()
         call.resolve()
     }
 
-    @objc func resume(_ call: CAPPluginCall) {
+    func resume(_ call: CAPPluginCall) {
         implementation.resume()
         call.resolve()
     }
 
-    @objc func trackEvent(_ call: CAPPluginCall) {
-        guard let name = call.options["name"] as? String else {
-            call.reject("Must provide an event name")
-            return
-        }
-
-        guard name.count != 0 else {
-            call.reject("Must provide an event name")
-            return
+    func trackEvent(_ call: CAPPluginCall) throws {
+        guard let name = call.options["name"] as? String, !name.isEmpty else {
+            throw CAPPluginError("Must provide an event name")
         }
 
         let properties = call.options["properties"] as? [String: String] ?? [:]
@@ -81,12 +75,12 @@ public class AnalyticsPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
-    @objc func enableManualSessionTracker(_ call: CAPPluginCall) {
+    func enableManualSessionTracker(_ call: CAPPluginCall) {
         implementation.enableManualSessionTracker()
         call.resolve()
     }
 
-    @objc func startSession(_ call: CAPPluginCall) {
+    func startSession(_ call: CAPPluginCall) {
         implementation.startSession()
         call.resolve()
     }
