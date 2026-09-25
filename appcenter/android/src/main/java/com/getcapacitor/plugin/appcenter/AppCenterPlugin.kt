@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.appcenter
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
+import com.getcapacitor.PluginException
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
 import com.microsoft.appcenter.reactnative.shared.AppCenterReactNativeShared
@@ -58,8 +59,7 @@ public class AppCenterPlugin : Plugin() {
     @PluginMethod(returnType = PluginMethod.RETURN_NONE)
     public fun setLogLevel(call: PluginCall) {
         if (!call.data.has("logLevel")) {
-            call.reject("Must provide a LogLevel")
-            return
+            throw PluginException("Must provide a LogLevel")
         }
 
         // A logLevel that is not an integer is null here. The Java code threw a NullPointerException
