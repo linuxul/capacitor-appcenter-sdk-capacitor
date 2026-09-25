@@ -44,7 +44,7 @@ public class AnalyticsPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     func setEnabled(_ call: CAPPluginCall) {
-        implementation.enable(call.getBool("enableFlag") ?? false)
+        implementation.enable(call.getBool("enable") ?? false)
         call.resolve()
     }
 
